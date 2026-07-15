@@ -1,5 +1,5 @@
-const CACHE='vba-sprint-v2';
-const ASSETS=['./','./index.html','./manifest.webmanifest','./icon.svg','./icon-192.png','./icon-512.png'];
+const CACHE='vba-sprint-v0.3.0';
+const ASSETS=['./','./index.html','./question-bank.js','./manifest.webmanifest','./icon.svg','./icon-192.png','./icon-512.png'];
 
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting()));
