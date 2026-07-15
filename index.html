@@ -39,7 +39,7 @@
     </div>
     <h2 class="section-title">分野から選ぶ</h2><div class="categories" id="categories"></div>
     <div class="dashboard"><section class="panel"><h3>分野別成績</h3><div class="bars" id="categoryBars"></div></section><section class="panel"><h3>獲得バッジ</h3><div class="badges" id="badges"></div></section><section class="panel"><h3>学習設定</h3><div class="settings"><label class="setting">1日の目標<input id="goalInput" type="number" min="1" max="100" onchange="saveSettings()"></label><label class="setting">試験日<input id="examInput" type="date" onchange="saveSettings()"></label><div class="setting"><span>試験まで</span><b id="countdown">未設定</b></div><button class="tiny" onclick="validateData()">問題データを検査</button></div></section><section class="panel calendar-panel"><div class="calendar-head"><h3>学習カレンダー</h3><div class="calendar-nav"><button onclick="moveCalendar(-1)" aria-label="前月">‹</button><b id="calendarTitle"></b><button onclick="moveCalendar(1)" aria-label="翌月">›</button></div></div><div class="month-calendar" id="calendar"></div></section></div>
-    <details class="version-history"><summary>バージョン履歴</summary><div class="history-list"><div class="history-item"><b>v0.4.0</b><p>実質重複問題を整理し、誤答選択肢ごとの解説を追加。</p></div><div class="history-item"><b>v0.3.1</b><p>重複選択肢を修正し、問題データの検査を強化。</p></div><div class="history-item"><b>v0.3.0</b><p>VBAスタンダード対策問題を500問追加。</p></div><div class="history-item"><b>v0.2.0</b><p>選択肢のランダム表示と、画面上のバージョン表示を追加。</p></div><div class="history-item"><b>v0.1.0</b><p>一問一答、復習、学習履歴、カレンダー、PWA対応を実装。</p></div></div></details>
+    <details class="version-history"><summary>バージョン履歴</summary><div class="history-list"><div class="history-item"><b>v0.4.1</b><p>誤答ごとに、その構文の用途や文法上の問題を具体的に説明。</p></div><div class="history-item"><b>v0.4.0</b><p>実質重複問題を整理し、誤答選択肢ごとの解説を追加。</p></div><div class="history-item"><b>v0.3.1</b><p>重複選択肢を修正し、問題データの検査を強化。</p></div><div class="history-item"><b>v0.3.0</b><p>VBAスタンダード対策問題を500問追加。</p></div><div class="history-item"><b>v0.2.0</b><p>選択肢のランダム表示と、画面上のバージョン表示を追加。</p></div><div class="history-item"><b>v0.1.0</b><p>一問一答、復習、学習履歴、カレンダー、PWA対応を実装。</p></div></div></details>
   </section>
   <section id="study" class="screen"><div class="study-shell"><div class="study-head"><button class="close" onclick="goHome()" aria-label="終了">×</button><div class="study-progress"><i id="quizBar"></i></div><span class="question-count" id="qCount"></span><button class="top-next" id="topNext" onclick="nextQuestion()" disabled>次へ →</button></div><article class="question-card"><div class="meta"><span class="tag" id="qCategory"></span><span class="tag level" id="qLevel"></span></div><h2 id="qText"></h2><div class="code" id="qCode"></div><div class="choices" id="choices"></div><div class="feedback" id="feedback"><div class="verdict" id="verdict"></div><p class="explain" id="explanation"></p><section class="wrong-box"><h3>ほかの選択肢が違う理由</h3><div class="wrong-list" id="wrongExplanations"></div></section><div class="feedback-tools"><button class="tiny" onclick="copyCode()">コードをコピー</button><button class="tiny" id="bookmarkBtn" onclick="toggleBookmark()">☆ 保存</button><button class="tiny" onclick="reportQuestion()">問題を報告</button><button class="tiny" onclick="openRelated()">関連問題</button></div><div class="self-rate"><button class="tiny" onclick="rate('mastered')">理解した</button><button class="tiny" onclick="rate('lucky')">勘で正解</button><button class="tiny" onclick="rate('unsure')">まだ不安</button></div><div class="actions"><button class="btn sub" id="flagBtn" onclick="toggleWeak()">⚑ まだ不安</button><button class="btn main" onclick="nextQuestion()">次の問題 →</button></div></div></article></div></section>
   <section id="result" class="screen"><div class="result"><div class="eyebrow">SESSION COMPLETE</div><h1>おつかれさまでした</h1><div class="ring" id="ring"><strong id="scorePct"></strong></div><div class="stats"><div class="stat"><strong id="correctStat"></strong>正解</div><div class="stat"><strong id="wrongStat"></strong>不正解</div><div class="stat"><strong id="weakStat"></strong>苦手登録</div></div><button class="btn main" onclick="goHome()">ホームへ戻る</button></div></section>
@@ -60,7 +60,7 @@ const questions=[
  {id:12,c:'デバッグ',l:'基礎',q:'イミディエイトウィンドウへ値を表示する命令は？',a:['Debug.Print','Console.Write','Msg.Print','Immediate.Show'],ok:0,e:'Debug.Print を使うと、変数や式の値をイミディエイトウィンドウで確認できます。'}
 ];
 questions.push(...window.EXTRA_QUESTIONS);
-const APP_VERSION='0.4.0';
+const APP_VERSION='0.4.1';
 const KEY='vbaSprintPrototype';
 const defaults={answered:0,seen:[],weak:[],mistakes:[],bookmarks:[],lastDate:'',streak:0,history:{},records:{},dailyGoal:10,examDate:'',lastSession:null};
 let state=Object.assign({},defaults,JSON.parse(localStorage.getItem(KEY)||'{}'));state.history=state.history||{};state.records=state.records||{};state.bookmarks=state.bookmarks||[];
@@ -88,7 +88,152 @@ function fallbackCopy(text){const a=document.createElement('textarea');a.value=t
 function reportQuestion(){const q=quiz[pos],text=`問題ID: ${q.id}\n問題: ${q.q}\n報告内容: `;fallbackCopy(text);toast('報告テンプレートをコピーしました')}
 function openRelated(){const c=quiz[pos].c,related=questions.filter(q=>q.c===c&&q.id!==quiz[pos].id);if(!related.length){toast('関連問題はありません');return}quiz.splice(pos+1,0,related[Math.floor(Math.random()*related.length)]);toast('次に関連問題を追加しました')}
 function escapeHtml(v){return String(v).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]))}
-function wrongReason(q,option){const correct=q.a[q.ok],calculation=q.code&&/(値|結果|何回|セル|要素数|大きさ)/.test(q.q);return calculation?`コードを順に評価した正しい結果は「${correct}」です。「${option}」は行・列、演算順序、または境界の読み取りが一致しません。${q.e}`:`この設問で該当するのは「${correct}」です。「${option}」は用途または動作が異なります。${q.e}`}
+function wrongReason(q,option){
+ const correct=q.a[q.ok],stem=q.q;
+ const meanings={
+  'Long':'Longは長整数型です。As Longが付いている変数だけに適用されます',
+  'Integer':'Integerは整数型ですが、この宣言にはAs Integerがありません',
+  'String':'Stringは文字列型ですが、この宣言にはAs Stringがありません',
+  'Sub':'Subは戻り値を返さない処理を定義するプロシージャです',
+  'Module':'Moduleはプロシージャを格納する単位で、戻り値を返すプロシージャではありません',
+  'Call':'Callは既存のプロシージャを呼び出すためのステートメントです',
+  'Set':'Setはオブジェクト変数へ参照を代入するキーワードで、変数宣言には使いません',
+  'LBound':'LBoundは配列の添字の下限を返します。上限を返すのはUBoundです',
+  'UCase':'UCaseは文字列を大文字へ変換する関数で、配列の境界とは無関係です',
+  'Bound':'VBAにBoundという組み込み関数はありません',
+  'Clear':'ClearはEraseの代わりになるVBAステートメントではありません',
+  'Reset Array':'Reset ArrayというVBA構文はありません',
+  'Delete':'Deleteは配列全体を初期化するVBAステートメントではありません',
+  'Select Case':'Select Caseは値によって処理を分岐する構文で、要素の列挙には使いません',
+  'With ... End With':'Withは同じオブジェクトへの記述をまとめる構文で、ループではありません',
+  'For Eachだけ':'For Eachは列挙に適しますが、前判定型の条件ループではありません',
+  'Do Untilだけ':'Do Untilも条件ループですが、コレクションの全要素を直接列挙する構文ではありません',
+  'End For':'VBAにEnd Forはありません。Forを抜けるのはExit Forです',
+  'Break':'BreakはVBAのループ脱出ステートメントではありません',
+  'Stop For':'Stopは実行を一時停止しますが、Stop Forという構文はありません',
+  'FindText':'VBAにFindTextという標準関数はありません',
+  'Search':'SearchはVBAで文字列位置を返す標準関数名ではありません',
+  'IndexOf':'IndexOfは主に他言語で使われる名前で、VBAではInStrを使います',
+  'Now':'Nowは現在の日付だけでなく時刻も含む値を返します',
+  'Time':'Timeは現在の時刻を返し、日付は含みません',
+  'Today':'VBAにTodayという組み込み関数はありません。ワークシート関数とは名称が異なります',
+  'Public Sub':'Public Subは他のモジュールからも呼び出せるため、同一モジュール内だけに限定されません',
+  'Global Sub':'Global Subというプロシージャ宣言構文はありません',
+  'Static Module':'Staticはローカル変数の値保持などに使いますが、モジュール内限定の宣言ではありません',
+  'ActiveWorkbook':'ActiveWorkbookは現在操作対象のブックで、コードを保存したブックとは限りません',
+  'Workbooks(1)':'Workbooks(1)は開かれた順序が先頭のブックで、コードの保存場所を意味しません',
+  'CurrentWorkbook':'VBAにCurrentWorkbookという組み込みプロパティはありません',
+  'xlDescending':'xlDescendingは降順を指定する定数です',
+  'xlUp':'xlUpはEndプロパティなどで上方向を表す定数で、並べ替え順ではありません',
+  'xlTopToBottom':'xlTopToBottomは並べ替えの方向を列方向に指定する定数で、昇順そのものではありません',
+  'TableObject':'Excel VBAにTableObjectというテーブルオブジェクトはありません',
+  'DataTable':'DataTableはWhat-If分析のデータテーブル等に関係する名称で、ワークシートのテーブルを表すListObjectではありません',
+  'ListRange':'ListRangeというExcel VBAオブジェクトはありません',
+  'CurrentRegion':'CurrentRegionは空白行・列で囲まれた連続範囲で、テーブルのデータ行だけに限定されません',
+  'TableData':'ListObjectにTableDataというプロパティはありません',
+  'BodyCells':'ListObjectにBodyCellsというプロパティはありません',
+  'False':'Findが見つからない場合はBooleanのFalseではなく、Rangeオブジェクト参照がNothingになります',
+  '空文字':'Findの戻り値は文字列ではないため、見つからない場合も空文字にはなりません',
+  'ErrorInfo':'VBAにErrorInfoという標準エラーオブジェクトはありません',
+  'Exception':'Exceptionは.NET系で使われる概念で、VBAの実行時エラー情報はErrオブジェクトに入ります',
+  'Debug':'DebugはPrintやAssertを提供するオブジェクトで、現在のエラー番号や説明を保持しません',
+  'On Error Off':'On Error OffというVBA構文はありません',
+  'Err.Clearだけ':'Err.ClearはErrのプロパティを初期化しますが、設定済みハンドラー自体を無効にはしません',
+  'Resume 0':'Resumeはエラー発生後に処理を再開する構文で、ハンドラーの無効化には使いません',
+  'Console.Write':'VBAには標準のConsole.Writeがありません',
+  'Print.Debug':'Debug.Printの語順を逆にした構文は存在しません',
+  'MsgBox.Print':'MsgBoxはダイアログ表示用で、Printメソッドはありません',
+  'コンパイル':'コンパイルは文法や参照を確認しますが、コードを1行ずつ実行する操作ではありません',
+  'ウォッチ式だけ':'ウォッチ式は値や条件の監視用で、単独では1行ずつ実行しません',
+  'マクロ記録':'マクロ記録は操作をコード化する機能で、デバッグ実行方法ではありません',
+  'Try Catch':'Try Catchは他言語の例外処理構文で、VBAではOn Errorを使います',
+  'On Error Resume ラベル':'Resumeの後ろにエラー処理ラベルを指定する構文ではありません',
+  'GoTo Error':'通常のGoToだけでは実行時エラー発生時の移動先を登録できません',
+  'Application.Visible = False':'Excelウィンドウ全体を非表示にする設定で、画面更新だけを止めるものではありません',
+  'Screen.Refresh = False':'Excel VBAにScreen.Refreshという画面更新制御プロパティはありません',
+  'Workbook.Update = False':'Workbook.Updateという画面更新停止用プロパティはありません',
+  'Application.Alerts = None':'Excel VBAにAlertsプロパティやNoneという指定はありません',
+  'MsgBox.Enabled = False':'MsgBoxは関数であり、Enabledプロパティを持ちません',
+  'Warnings.Hide':'Excel VBAにWarnings.Hideという標準構文はありません',
+  '変数を宣言する':'変数宣言はDimなどの役割で、Withはオブジェクト名の反復を省略するために使います',
+  'エラーを無視する':'エラー処理はOn Errorの役割で、Withにはエラーを無視する機能はありません',
+  'ループを終了する':'ループ終了にはExit ForやExit Doを使い、Withはループではありません',
+  'Exists':'VBAに単独のExists関数はありません。FileSystemObjectではメソッド名が異なります',
+  'FileFind':'VBAにFileFindという標準関数はありません',
+  'PathCheck':'VBAにPathCheckという標準関数はありません',
+  'UsedRangeOnly':'UsedRangeOnlyというExcel VBAプロパティはありません。使用済み範囲ならUsedRange、連続表範囲ならCurrentRegionです',
+  'EntireTable':'EntireTableというRangeプロパティはありません',
+  'DataArea':'DataAreaというExcel VBAの標準Rangeプロパティはありません',
+  'ActiveWorkbook.Close Save:=No':'CloseメソッドにSaveという引数やNoというVBA定数はありません。SaveChangesへFalseを渡します',
+  'Workbooks.Close Falseだけ':'Workbooksコレクション全体に、この形で保存指定を渡すClose呼び出しはできません。対象Workbookを指定します',
+  'Application.Quit False':'Application.QuitはExcel自体を終了します。また、この位置にFalseを渡して保存を制御する構文ではありません',
+  'Worksheet_Select':'Worksheet_Selectという標準イベントはありません。選択範囲の変更ならWorksheet_SelectionChangeです',
+  'Workbook_Change':'セル変更を直接受け取るWorkbook_Changeイベントはありません。シートのセル変更はWorksheet_Changeです',
+  'Cell_Change':'CellオブジェクトのChangeイベントという形式はありません。ワークシートモジュールのWorksheet_Changeを使います',
+  'Workbook_Start':'Workbook_Startというイベントはありません。ブックを開いた直後はWorkbook_Openです',
+  'Application_Open':'Application_Openという標準イベントはありません。ブック単位ならWorkbook_Openです',
+  'Book_ActivateOnly':'Book_ActivateOnlyというVBAイベントは存在しません',
+  'Range("A1") == "完了"':'VBAの比較演算子は=であり、==は使いません。また比較だけではセルへ値を代入できません',
+  'Cell("A1") = "完了"':'Excel VBAにCellという単数形のセル参照プロパティはありません。RangeまたはCellsを使います',
+  'A1.Value("完了")':'A1はそのままではRangeオブジェクト名にならず、Valueも値を引数に取るメソッドではありません',
+  'If score => 80':'以上を表す演算子の順序は>=です。=>という演算子はVBAにありません',
+  'If score Over 80':'VBAにOverという比較演算子はありません。数値の以上判定には>=を使います',
+  'When score >= 80':'VBAの条件分岐はWhenではなくIfで開始し、条件の後ろにThenが必要です',
+  'CurrentBook':'CurrentBookというExcel VBAの組み込みブックプロパティはありません',
+  'SelectedWorkbook':'SelectedWorkbookというExcel VBAプロパティはありません。現在アクティブなブックはActiveWorkbookです',
+  'On Error Resume ErrorHandler':'Resumeの後ろにエラー処理開始ラベルを登録することはできません。登録にはOn Error GoToを使います',
+  'Catch ErrorHandler':'CatchはVBAの例外処理構文ではありません。VBAではOn Error GoToでラベルを指定します',
+  'Resize':'ResizeはRangeのサイズ変更用プロパティで、動的配列の再確保には使いません',
+  'ReArray':'ReArrayというVBAステートメントはありません',
+  'Dim Again':'Dim Againという構文はありません。宣言済みの動的配列変更にはReDimを使います',
+  'Worksheet_Click':'Worksheet_Clickという標準ワークシートイベントはありません',
+  'Immediate.Show':'Immediate.ShowというVBA命令はありません'
+ };
+ if(stem==='列全体を表す正しい記述は？'){
+  if(/^Rows\(/.test(option))return `${option}は行全体を参照するRowsプロパティです。列記号を渡して列全体を取得する用途には使えません。`;
+  if(/^Cells\.Column/.test(option))return 'Cellsが返すRangeのColumnプロパティは列番号を返す読み取り用プロパティで、引数を取るメソッドではありません。';
+  if(/^Column\(/.test(option))return 'VBAには単独で呼び出せるColumnコレクションがありません。列全体の参照には複数形のColumnsを使います。';
+ }
+ if(stem==='整数除算「\\」の結果は？')return `「${option}」にはなりません。\\ は商の小数部分を除いた整数を返すため、計算結果は「${correct}」です。`;
+ if(stem==='Mod演算子の実行結果は？')return `「${option}」は余りではありません。Modは除算の商ではなく余りを返し、この式の余りは「${correct}」です。`;
+ if(stem==='文字列を連結した結果は？'){
+  if(option==='型不一致')return '&は数値を文字列として連結できるため、この式は型不一致になりません。';
+  if(/^"VBA /.test(option))return 'コード中に空白文字を連結していないため、VBAと数値の間に空白は入りません。';
+  return '&は左辺、右辺の順に連結するため、数値がVBAより前になる結果ではありません。';
+ }
+ if(stem==='次の変数 x のデータ型は？')return meanings[option]||`xにはAs句がないため「${option}」型にはならず、既定のVariant型になります。`;
+ if(stem==='表示される文字列は？')return `scoreの値と「>= 60」を比較すると条件は${correct==='合格'?'True':'False'}です。そのため「${option}」側の分岐は実行されません。`;
+ if(stem==='Select Caseで表示される値は？')return `nの値に最初に一致するCaseで表示されるのは「${correct}」です。「${option}」を表示するCaseには一致しません。`;
+ if(stem==='Debug.Printは何回実行される？')return `開始値、終了値、Stepを順に追うと実行回数は${correct}です。${option}はStepまたは終了値を含む条件の数え方が一致しません。`;
+ if(stem==='Offset後のセルは？')return `Offsetの第1引数は行、第2引数は列の移動量です。基準セルからその順で移動すると「${correct}」になり、「${option}」には移動しません。`;
+ if(stem==='Resizeで作られる範囲の大きさは？')return `Resizeの第1引数が行数、第2引数が列数です。指定サイズは「${correct}」であり、「${option}」ではありません。`;
+ if(/^Cells\(\d+, \d+\)が表すセル/.test(stem))return `CellsはCells(行番号, 列番号)の順です。その位置をA1形式へ直すと「${correct}」であり、「${option}」は行列の対応が違います。`;
+ if(stem==='配列の要素数はいくつ？')return `Toで指定した下限と上限はどちらも要素に含まれます。上限－下限＋1は「${correct}」なので、「${option}」は端の数え方が違います。`;
+ if(stem==='Len関数の戻り値は？')return `Lenは引用符内の文字数をそのまま数えます。この文字列は${correct}文字なので、「${option}」ではありません。`;
+ if(stem==='Left関数の戻り値は？')return `Leftは左端から指定文字数だけを返します。結果は「${correct}」で、「${option}」は開始位置または文字数の取り方が違います。`;
+ if(stem==='Right関数の戻り値は？')return `Rightは右端から指定文字数だけを返します。結果は「${correct}」で、「${option}」は左側または途中から切り出した値です。`;
+ if(stem==='実行後の n の値は？')return q.code&&q.code.includes('ByVal')?`ByValは値のコピーを渡すため、呼び出し先で変更しても元のnは「${correct}」のままです。「${option}」は変更が元へ反映されると考えた値です。`:q.code&&q.code.includes('ByRef')?`ByRefは元の変数を参照するため、呼び出し先の加算が反映されて「${correct}」になります。「${option}」はその反映を無視した値です。`:`コードを上から代入・演算するとnは「${correct}」です。「${option}」は途中の値または別の演算結果です。`;
+ if(/^Call Test /.test(option))return 'Callを使う場合、引数リストは丸かっこで囲む必要があります。';
+ if(/^Test\(/.test(option))return 'Callを省略してSubを呼ぶ場合は、引数を丸かっこで囲まないのが基本です。この形は戻り値を使わない呼び出しとして不適切です。';
+ if(/^Run Test/.test(option))return 'VBAにRun Testというプロシージャ呼び出し構文はありません。';
+ if(/^Worksheet\(/.test(option))return '単一形のWorksheetはコレクションではないため、インデックスで参照できません。Worksheetsを使います。';
+ if(/^Sheets\.Item\(0\)/.test(option))return 'Sheetsコレクションのインデックスは1から始まるため、0番は指定できません。';
+ if(/^Worksheets\[/.test(option))return 'VBAではコレクションの添字に角かっこではなく丸かっこを使います。';
+ if(/^ReDim arr/.test(option))return 'PreserveがないReDimは配列サイズを変更できますが、既存の要素値は失われます。';
+ if(/^Resize Preserve/.test(option))return 'Resize PreserveというVBAの配列変更構文はありません。配列にはReDim Preserveを使います。';
+ if(/^Dim Preserve/.test(option))return 'Dim Preserveという構文はありません。動的配列の再確保にはReDimを使います。';
+ if(/^Open パス For Output/.test(option))return 'Outputモードは既存内容を消して先頭から書き込むため、追記にはなりません。';
+ if(/^Open パス For Input/.test(option))return 'Inputモードは読み込み専用で、ファイル末尾へ書き込めません。';
+ if(option==='File.Open Append')return 'VBAの標準ファイル入出力にFile.Openという構文はありません。Open文でFor Appendを指定します。';
+ if(/^AutoFilter Column/.test(option))return 'AutoFilterではColumnやValueではなく、FieldとCriteria1という名前付き引数を使います。';
+ if(/\.Filter /.test(option))return 'Rangeオブジェクトに、この形式のFilterメソッドはありません。絞り込みにはAutoFilterを使います。';
+ if(/\.Hidden = "東京"/.test(option))return 'Hiddenは行・列の表示状態をBooleanで指定するプロパティで、条件文字列による絞り込みはできません。';
+ if(meanings[option])return `${meanings[option]}。そのため、この設問の正解「${correct}」の代わりにはなりません。`;
+ if(/^[A-Z]+\d+$/.test(option))return `「${option}」は別のセルです。行番号と列番号、または移動量をコードどおりに適用すると「${correct}」になります。`;
+ if(/^\d+行×\d+列$/.test(option))return `「${option}」は行数か列数が指定と異なります。第1引数を行数、第2引数を列数として読むと「${correct}」です。`;
+ if(/^\d+回$/.test(option)||/^-?\d+(\.\d+)?$/.test(option))return `「${option}」はコードを最後まで評価した値ではありません。演算子、Step、または配列境界を適用した結果は「${correct}」です。`;
+ return `「${option}」は${q.e.replace(/。$/,'')}という動作をしないため、この設問には該当しません。正しくは「${correct}」です。`;
+}
 function renderWrongExplanations(q){const buttons=[...document.querySelectorAll('.choice')];$('wrongExplanations').innerHTML=buttons.filter(b=>Number(b.dataset.answer)!==q.ok).map(b=>{const original=Number(b.dataset.answer),label=b.querySelector('b').textContent,option=q.a[original];return `<div class="wrong-item"><b>${escapeHtml(label)}「${escapeHtml(option)}」</b><br>${escapeHtml(wrongReason(q,option))}</div>`}).join('')}
 function renderBars(){const cats=[...new Set(questions.map(q=>q.c))];$('categoryBars').innerHTML=cats.map(c=>{const ids=questions.filter(q=>q.c===c).map(q=>q.id),rs=ids.map(id=>state.records[id]).filter(Boolean),tries=rs.reduce((s,r)=>s+(r.tries||0),0),ok=rs.reduce((s,r)=>s+(r.correct||0),0),p=tries?Math.round(ok/tries*100):0;return `<div class="bar-row"><span>${c}</span><div class="mini-track"><i style="width:${p}%"></i></div><b>${p}%</b></div>`}).join('')}
 function renderCalendar(){const y=calendarCursor.getFullYear(),m=calendarCursor.getMonth(),first=new Date(y,m,1).getDay(),last=new Date(y,m+1,0).getDate(),names=['日','月','火','水','木','金','土'];$('calendarTitle').textContent=`${y}年 ${m+1}月`;let h=names.map(n=>`<span class="weekday">${n}</span>`).join('');for(let i=0;i<first;i++)h+='<span class="month-day blank"></span>';for(let d=1;d<=last;d++){const dt=new Date(y,m,d),k=dt.toLocaleDateString('sv-SE'),n=state.history[k]||0;h+=`<button class="month-day ${k===today()?'today':''}" onclick="editDay('${k}')"><span class="date">${d}</span><span class="count ${n?'':'zero'}">${n}問</span></button>`}$('calendar').innerHTML=h}
