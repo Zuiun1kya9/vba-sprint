@@ -104,5 +104,6 @@ for(let i=1;i<=50;i++){
   if(mode===4)add(1450+i,'ファイル・その他','標準','Withブロックを使う主な目的は？',['同じオブジェクトへの記述をまとめる','変数を宣言する','エラーを無視する','ループを終了する'],'Withを使うと同じオブジェクト名の繰り返しを省略できます。');
 }
 
-window.EXTRA_QUESTIONS=bank;
+const seen=new Set();
+window.EXTRA_QUESTIONS=bank.filter(q=>{const key=`${q.q}|${q.code||''}|${q.a.join('|')}`;if(seen.has(key))return false;seen.add(key);return true});
 })();

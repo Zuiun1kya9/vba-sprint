@@ -1,4 +1,4 @@
-const CACHE='vba-sprint-v0.3.1';
+const CACHE='vba-sprint-v0.4.0';
 const ASSETS=['./','./index.html','./question-bank.js','./manifest.webmanifest','./icon.svg','./icon-192.png','./icon-512.png'];
 
 self.addEventListener('install',event=>{
