@@ -1,15 +1,15 @@
 (function(){
 'use strict';
 const bank=[];
-const add=(id,c,l,q,a,e,code)=>bank.push({id,c,l,q,a,ok:0,e,code:code||null});
+const add=(id,c,l,q,a,e,code)=>{if(new Set(a).size!==a.length)console.error(`Duplicate choices: ${id}`);bank.push({id,c,l,q,a,ok:0,e,code:code||null})};
 const col=n=>{let s='';while(n){n--;s=String.fromCharCode(65+n%26)+s;n=Math.floor(n/26)}return s};
 
 // 1. 変数・演算子（50問）
 for(let i=1;i<=50;i++){
   const a=2+i%11,b=1+(i*3)%9,mode=i%5;
   if(mode===0)add(1000+i,'変数・演算子','基礎','実行後の n の値は？',[String(a+b),String(a-b),String(a*b),String(b)],'加算代入の結果を求めます。',`Dim n As Long\nn = ${a}\nn = n + ${b}`);
-  if(mode===1)add(1000+i,'変数・演算子','標準','整数除算「\\」の結果は？',[String(Math.floor(a*b/(b+1))),String(a*b/(b+1)),String((a*b)%(b+1)),'エラー'],`\\ は小数部分を除いた整数除算です。`, `Debug.Print ${a*b} \\ ${b+1}`);
-  if(mode===2)add(1000+i,'変数・演算子','標準','Mod演算子の実行結果は？',[String((a+b)%b),String(Math.floor((a+b)/b)),String(a+b),String(b)],'Mod は割り算の余りを返します。',`Debug.Print ${a+b} Mod ${b}`);
+  if(mode===1){const correct=Math.floor(a*b/(b+1));add(1000+i,'変数・演算子','標準','整数除算「\\」の結果は？',[String(correct),String(correct+1),String(correct+2),'エラー'],`\\ は小数部分を除いた整数除算です。`, `Debug.Print ${a*b} \\ ${b+1}`)}
+  if(mode===2){const correct=(a+b)%b;add(1000+i,'変数・演算子','標準','Mod演算子の実行結果は？',[String(correct),String(correct+1),String(correct+2),String(correct+3)],'Mod は割り算の余りを返します。',`Debug.Print ${a+b} Mod ${b}`)}
   if(mode===3)add(1000+i,'変数・演算子','基礎','文字列を連結した結果は？',[`"VBA${a}"`,`"VBA ${a}"`,`"${a}VBA"`,'型不一致'],'& 演算子は文字列を連結します。',`Debug.Print "VBA" & ${a}`);
   if(mode===4)add(1000+i,'変数・演算子','標準','次の変数 x のデータ型は？',['Variant','Long','Integer','String'],'1つの Dim 文でも、As句を省略した変数は Variant です。',`Dim x, y As Long`);
 }
@@ -17,9 +17,9 @@ for(let i=1;i<=50;i++){
 // 2. 条件分岐・繰り返し（50問）
 for(let i=1;i<=50;i++){
   const start=1+i%4,end=start+2+i%5,step=1+i%3,mode=i%5;
-  if(mode===0){let n=0;for(let x=start;x<=end;x+=step)n++;add(1050+i,'条件分岐・繰り返し','標準','Debug.Printは何回実行される？',[`${n}回`,`${end-start+1}回`,`${step}回`,`${n+1}回`],'Forは開始値から終了値までStepずつ増加します。',`For i = ${start} To ${end} Step ${step}\n    Debug.Print i\nNext i`)}
+  if(mode===0){let n=0;for(let x=start;x<=end;x+=step)n++;add(1050+i,'条件分岐・繰り返し','標準','Debug.Printは何回実行される？',[`${n}回`,`${n+1}回`,`${n+2}回`,`${n+3}回`],'Forは開始値から終了値までStepずつ増加します。',`For i = ${start} To ${end} Step ${step}\n    Debug.Print i\nNext i`)}
   if(mode===1){const x=40+i;add(1050+i,'条件分岐・繰り返し','基礎','表示される文字列は？',[x>=60?'合格':'再試験',x>=60?'再試験':'合格','何も表示されない','エラー'],'Ifの条件がTrueならThen側、FalseならElse側を実行します。',`score = ${x}\nIf score >= 60 Then\n MsgBox "合格"\nElse\n MsgBox "再試験"\nEnd If`)}
-  if(mode===2){const x=i%4;add(1050+i,'条件分岐・繰り返し','標準','Select Caseで表示される値は？',[x===0?'A':x<=2?'B':'C',x===0?'B':'A','C','何も表示されない'],'最初に一致したCaseだけが実行されます。',`n = ${x}\nSelect Case n\n Case 0: MsgBox "A"\n Case 1 To 2: MsgBox "B"\n Case Else: MsgBox "C"\nEnd Select`)}
+  if(mode===2){const x=i%4,correct=x===0?'A':x<=2?'B':'C',others=['A','B','C','何も表示されない'].filter(v=>v!==correct);add(1050+i,'条件分岐・繰り返し','標準','Select Caseで表示される値は？',[correct,...others],'最初に一致したCaseだけが実行されます。',`n = ${x}\nSelect Case n\n Case 0: MsgBox "A"\n Case 1 To 2: MsgBox "B"\n Case Else: MsgBox "C"\nEnd Select`)}
   if(mode===3)add(1050+i,'条件分岐・繰り返し','基礎','条件を先に判定するループは？',['Do While 条件 ... Loop','Do ... Loop While 条件','For Eachだけ','With ... End With'],'Do Whileを先頭に置く形式は、処理前に条件を判定します。');
   if(mode===4)add(1050+i,'条件分岐・繰り返し','標準','Forループを途中で抜けるステートメントは？',['Exit For','End For','Break','Stop For'],'Exit Forは最も内側のForループを終了します。');
 }
@@ -27,9 +27,9 @@ for(let i=1;i<=50;i++){
 // 3. Range・Cells・Offset（50問）
 for(let i=1;i<=50;i++){
   const r=1+i%20,c=1+(i*7)%12,dr=i%4,dc=i%3,mode=i%5,address=col(c)+r;
-  if(mode===0)add(1100+i,'セル・Range','基礎',`Cells(${r}, ${c})が表すセルは？`,[address,col(r)+c,col(c+1)+r,col(c)+(r+1)],'Cellsは Cells(行番号, 列番号) の順です。');
-  if(mode===1)add(1100+i,'セル・Range','標準','Offset後のセルは？',[col(c+dc)+(r+dr),col(c+dr)+(r+dc),col(c)+r,col(c+dc+1)+(r+dr+1)],'Offset(行方向, 列方向)で基準セルから移動します。',`Range("${address}").Offset(${dr}, ${dc}).Select`);
-  if(mode===2)add(1100+i,'セル・Range','標準','Resizeで作られる範囲の大きさは？',[`${dr+2}行×${dc+2}列`,`${dc+2}行×${dr+2}列`,`${dr+1}行×${dc+1}列`,'1セル'],'Resize(行数, 列数)で範囲のサイズを指定します。',`Range("${address}").Resize(${dr+2}, ${dc+2}).Select`);
+  if(mode===0)add(1100+i,'セル・Range','基礎',`Cells(${r}, ${c})が表すセルは？`,[address,col(c+1)+r,col(c)+(r+1),'A1'],'Cellsは Cells(行番号, 列番号) の順です。');
+  if(mode===1){const rr=r+dr,cc=c+dc;add(1100+i,'セル・Range','標準','Offset後のセルは？',[col(cc)+rr,col(cc)+(rr+1),col(cc+1)+rr,col(cc)+(rr>1?rr-1:rr+2)],'Offset(行方向, 列方向)で基準セルから移動します。',`Range("${address}").Offset(${dr}, ${dc}).Select`)}
+  if(mode===2){const rows=dr+2,cols=dc+2;add(1100+i,'セル・Range','標準','Resizeで作られる範囲の大きさは？',[`${rows}行×${cols}列`,`${rows+1}行×${cols}列`,`${rows}行×${cols+1}列`,'1行×1列'],'Resize(行数, 列数)で範囲のサイズを指定します。',`Range("${address}").Resize(${rows}, ${cols}).Select`)}
   if(mode===3)add(1100+i,'セル・Range','基礎','列全体を表す正しい記述は？',[`Columns("${col(c)}")`,`Rows("${col(c)}")`,`Column(${c})`,`Cells.Column(${c})`],'Columnsプロパティは指定した列全体を返します。');
   if(mode===4)add(1100+i,'セル・Range','標準','連続した表範囲を取得するプロパティは？',['CurrentRegion','UsedRangeOnly','EntireTable','DataArea'],'CurrentRegionは空白行・空白列で囲まれた連続範囲を返します。');
 }
@@ -37,7 +37,7 @@ for(let i=1;i<=50;i++){
 // 4. 配列・コレクション（50問）
 for(let i=1;i<=50;i++){
   const lower=i%2,upper=lower+2+i%6,mode=i%5;
-  if(mode===0)add(1150+i,'配列','基礎','配列の要素数はいくつ？',[String(upper-lower+1),String(upper),String(upper-lower),String(upper+1)],'下限と上限の両端を含むため、要素数は上限－下限＋1です。',`Dim arr(${lower} To ${upper}) As Long`);
+  if(mode===0){const count=upper-lower+1;add(1150+i,'配列','基礎','配列の要素数はいくつ？',[String(count),String(count-1),String(count+1),String(count+2)],'下限と上限の両端を含むため、要素数は上限－下限＋1です。',`Dim arr(${lower} To ${upper}) As Long`)}
   if(mode===1)add(1150+i,'配列','標準','配列の上限を返す関数は？',['UBound','LBound','UCase','Bound'],'UBoundは指定次元の添字の最大値を返します。');
   if(mode===2)add(1150+i,'配列','標準','既存の値を残して動的配列を拡張する記述は？',[`ReDim Preserve arr(${upper})`,`ReDim arr(${upper})`,`Resize Preserve arr(${upper})`,`Dim Preserve arr(${upper})`],'ReDim Preserveで既存要素を保持したまま最終次元を変更します。');
   if(mode===3)add(1150+i,'配列','基礎','配列の全要素を初期化するステートメントは？',['Erase','Clear','Reset Array','Delete'],'Eraseは固定配列を初期化し、動的配列の領域を解放します。');
