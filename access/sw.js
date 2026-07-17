@@ -1,4 +1,4 @@
-const CACHE='access-sprint-v0.2.0';
+const CACHE='access-sprint-v0.2.1';
 const ASSETS=['./','./index.html','./question-bank.js','./manifest.webmanifest','./icon.svg','./icon-192.png','./icon-512.png'];
 
 self.addEventListener('install',event=>{
