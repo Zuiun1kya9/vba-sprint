@@ -1,5 +1,12 @@
 # VBA Sprint 公開手順
 
+Excel VBA Standard版とAccess VBA Standard版を、同じGitHub Pagesサイトで公開する一問一答アプリです。
+
+- Excel VBA Standard：`/`
+- Access VBA Standard：`/access/`
+
+画面右上のベントーメニューから、2つの学習サイトを切り替えられます。学習履歴はコースごとに分けてブラウザ内へ保存されます。
+
 このフォルダ内のファイルを、すべて同じ階層のままGitHubへアップロードします。
 
 1. GitHubで公開リポジトリを新規作成します（例：`vba-sprint`）。
@@ -16,6 +23,6 @@
 
 ## 更新時の注意
 
-`index.html`などを更新したときは、`sw.js`先頭のキャッシュ名を `vba-sprint-v2` のように変更すると、端末へ新しいファイルが反映されやすくなります。
+`index.html`などを更新したときは、対応する `sw.js` 先頭のキャッシュ名を変更すると、端末へ新しいファイルが反映されやすくなります。Access版のキャッシュ設定は `access/sw.js` にあります。
 
 学習履歴は各ブラウザの端末内に保存され、PCとスマホ間では同期されません。
