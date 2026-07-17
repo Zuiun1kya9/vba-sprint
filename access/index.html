@@ -6,13 +6,13 @@
   <meta name="theme-color" content="#175c47">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="VBA Sprint">
-  <meta name="description" content="Excel VBA スタンダード対策の一問一答学習アプリ">
+  <meta name="apple-mobile-web-app-title" content="Access Sprint">
+  <meta name="description" content="Access VBA スタンダード対策の一問一答学習アプリ">
   <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="icon" href="./icon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="./icon-192.png">
+  <link rel="icon" href="../icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../icon-192.png">
   <script src="./question-bank.js"></script>
-  <title>VBA Sprint - 学習プロトタイプ</title>
+  <title>Access Sprint - Access VBA Standard</title>
   <style>
     :root{--ink:#17231f;--muted:#68756f;--paper:#f4f2eb;--card:#fffdf7;--green:#175c47;--lime:#dced7b;--line:#d9ddd4;--red:#bc4b45;--shadow:0 14px 40px rgba(24,48,39,.1)}
     *{box-sizing:border-box} body{margin:0;color:var(--ink);background:var(--paper);font-family:"Yu Gothic UI","Hiragino Kaku Gothic ProN",system-ui,sans-serif;min-height:100vh}
@@ -29,9 +29,9 @@
 </head>
 <body>
 <main class="app">
-  <header class="topbar"><div class="brand"><span class="logo">V<b>+</b></span><span>VBA SPRINT</span><span class="version" id="appVersion"></span></div><div class="top-actions"><span class="streak">🔥 <b id="streak">0</b>日連続</span><div class="bento-wrap"><button class="bento-button" type="button" aria-label="学習サイトを切り替える" aria-expanded="false" aria-controls="appMenu" onclick="toggleAppMenu(event)"><i></i><i></i><i></i><i></i></button><nav class="app-menu" id="appMenu" aria-label="学習サイト"><span class="app-menu-title">COURSE SWITCHER</span><a class="app-link" href="./" aria-current="page"><span class="app-link-logo">E+</span><span><b>Excel VBA Standard</b><small>Excelの自動化を学習</small></span></a><a class="app-link" href="./access/"><span class="app-link-logo">A+</span><span><b>Access VBA Standard</b><small>Accessの自動化を学習</small></span></a></nav></div></div></header>
+  <header class="topbar"><div class="brand"><span class="logo">A<b>+</b></span><span>ACCESS SPRINT</span><span class="version" id="appVersion"></span></div><div class="top-actions"><span class="streak">🔥 <b id="streak">0</b>日連続</span><div class="bento-wrap"><button class="bento-button" type="button" aria-label="学習サイトを切り替える" aria-expanded="false" aria-controls="appMenu" onclick="toggleAppMenu(event)"><i></i><i></i><i></i><i></i></button><nav class="app-menu" id="appMenu" aria-label="学習サイト"><span class="app-menu-title">COURSE SWITCHER</span><a class="app-link" href="../"><span class="app-link-logo">E+</span><span><b>Excel VBA Standard</b><small>Excelの自動化を学習</small></span></a><a class="app-link" href="./" aria-current="page"><span class="app-link-logo">A+</span><span><b>Access VBA Standard</b><small>Accessの自動化を学習</small></span></a></nav></div></div></header>
   <section id="home" class="screen active">
-    <div class="hero"><div><div class="eyebrow">EXCEL VBA STANDARD</div><h1>短く解いて、<br>しっかり定着。</h1><p>一問ずつテンポよく。正解だけでなく「まだ不安」も記録して、自分専用の復習セットを作れます。</p></div><div class="progress-card"><small>累計学習</small><div class="big"><span id="totalAnswered">0</span> 問</div><div class="track"><i id="totalBar"></i></div><small><span id="mastered">0</span> / <span id="totalQuestions">0</span>問に挑戦済み</small></div></div>
+    <div class="hero"><div><div class="eyebrow">ACCESS VBA STANDARD</div><h1>短く解いて、<br>しっかり定着。</h1><p>一問ずつテンポよく。正解だけでなく「まだ不安」も記録して、自分専用の復習セットを作れます。</p></div><div class="progress-card"><small>累計学習</small><div class="big"><span id="totalAnswered">0</span> 問</div><div class="track"><i id="totalBar"></i></div><small><span id="mastered">0</span> / <span id="totalQuestions">0</span>問に挑戦済み</small></div></div>
     <div class="mission"><span>今日の目標 <b id="todayCount">0</b> / <b id="dailyGoalLabel">10</b>問</span><span id="missionMark">あと10問</span></div>
     <div class="grid">
       <button class="mode primary" onclick="startQuiz('due')"><span class="icon">▶</span><h3>今日の復習</h3><p id="dueCaption">復習予定から出題</p></button>
@@ -40,29 +40,16 @@
     </div>
     <h2 class="section-title">分野から選ぶ</h2><div class="categories" id="categories"></div>
     <div class="dashboard"><section class="panel"><h3>分野別成績</h3><div class="bars" id="categoryBars"></div></section><section class="panel"><h3>獲得バッジ</h3><div class="badges" id="badges"></div></section><section class="panel"><h3>学習設定</h3><div class="settings"><label class="setting">1日の目標<input id="goalInput" type="number" min="1" max="100" onchange="saveSettings()"></label><label class="setting">試験日<input id="examInput" type="date" onchange="saveSettings()"></label><div class="setting"><span>試験まで</span><b id="countdown">未設定</b></div><button class="tiny" onclick="validateData()">問題データを検査</button></div></section><section class="panel calendar-panel"><div class="calendar-head"><h3>学習カレンダー</h3><div class="calendar-nav"><button onclick="moveCalendar(-1)" aria-label="前月">‹</button><b id="calendarTitle"></b><button onclick="moveCalendar(1)" aria-label="翌月">›</button></div></div><div class="month-calendar" id="calendar"></div></section></div>
-    <details class="version-history"><summary>バージョン履歴</summary><div class="history-list"><div class="history-item"><b>v0.5.0</b><p>Access VBA Standard版と、サイトを切り替えるベントーメニューを追加。</p></div><div class="history-item"><b>v0.4.1</b><p>誤答ごとに、その構文の用途や文法上の問題を具体的に説明。</p></div><div class="history-item"><b>v0.4.0</b><p>実質重複問題を整理し、誤答選択肢ごとの解説を追加。</p></div><div class="history-item"><b>v0.3.1</b><p>重複選択肢を修正し、問題データの検査を強化。</p></div><div class="history-item"><b>v0.3.0</b><p>VBAスタンダード対策問題を500問追加。</p></div><div class="history-item"><b>v0.2.0</b><p>選択肢のランダム表示と、画面上のバージョン表示を追加。</p></div><div class="history-item"><b>v0.1.0</b><p>一問一答、復習、学習履歴、カレンダー、PWA対応を実装。</p></div></div></details>
+    <details class="version-history"><summary>バージョン履歴</summary><div class="history-list"><div class="history-item"><b>v0.1.0</b><p>Access VBA Standard対策500問、一問一答、復習、学習履歴、カレンダー、PWA対応を実装。</p></div></div></details>
   </section>
   <section id="study" class="screen"><div class="study-shell"><div class="study-head"><button class="close" onclick="goHome()" aria-label="終了">×</button><div class="study-progress"><i id="quizBar"></i></div><span class="question-count" id="qCount"></span><button class="top-next" id="topNext" onclick="nextQuestion()" disabled>次へ →</button></div><article class="question-card"><div class="meta"><span class="tag" id="qCategory"></span><span class="tag level" id="qLevel"></span></div><h2 id="qText"></h2><div class="code" id="qCode"></div><div class="choices" id="choices"></div><div class="feedback" id="feedback"><div class="verdict" id="verdict"></div><p class="explain" id="explanation"></p><section class="wrong-box"><h3>ほかの選択肢が違う理由</h3><div class="wrong-list" id="wrongExplanations"></div></section><div class="feedback-tools"><button class="tiny" onclick="copyCode()">コードをコピー</button><button class="tiny" id="bookmarkBtn" onclick="toggleBookmark()">☆ 保存</button><button class="tiny" onclick="reportQuestion()">問題を報告</button><button class="tiny" onclick="openRelated()">関連問題</button></div><div class="self-rate"><button class="tiny" onclick="rate('mastered')">理解した</button><button class="tiny" onclick="rate('lucky')">勘で正解</button><button class="tiny" onclick="rate('unsure')">まだ不安</button></div><div class="actions"><button class="btn sub" id="flagBtn" onclick="toggleWeak()">⚑ まだ不安</button><button class="btn main" onclick="nextQuestion()">次の問題 →</button></div></div></article></div></section>
   <section id="result" class="screen"><div class="result"><div class="eyebrow">SESSION COMPLETE</div><h1>おつかれさまでした</h1><div class="ring" id="ring"><strong id="scorePct"></strong></div><div class="stats"><div class="stat"><strong id="correctStat"></strong>正解</div><div class="stat"><strong id="wrongStat"></strong>不正解</div><div class="stat"><strong id="weakStat"></strong>苦手登録</div></div><button class="btn main" onclick="goHome()">ホームへ戻る</button></div></section>
 </main><div class="toast" id="toast"></div>
 <script>
-const questions=[
- {id:1,c:'変数・定数',l:'基礎',q:'変数を明示的に宣言するステートメントはどれですか？',a:['Dim','Sub','Call','Set'],ok:0,e:'Dim ステートメントで変数を宣言します。Option Explicit を使うと宣言漏れも検出できます。'},
- {id:2,c:'変数・定数',l:'標準',q:'Integer型の変数 n に文字列「10」を代入するとどうなりますか？',code:'Dim n As Integer\nn = "10"',a:['10が代入される','型が違うため必ずエラー','文字列のまま代入される','0が代入される'],ok:0,e:'変換可能な文字列は暗黙に数値へ変換されます。ただし、意図を明確にするなら CInt などを使います。'},
- {id:3,c:'セル操作',l:'基礎',q:'セル A1 に「完了」と入力するコードはどれですか？',a:['Range("A1").Value = "完了"','Range("A1") == "完了"','Cell("A1") = "完了"','A1.Value("完了")'],ok:0,e:'Range オブジェクトの Value プロパティに値を代入します。'},
- {id:4,c:'セル操作',l:'標準',q:'次のコードで選択される範囲はどれですか？',code:'Range("A1").CurrentRegion.Select',a:['A1を含む連続した表範囲','A列全体','使用済みセルすべて','A1だけ'],ok:0,e:'CurrentRegion は空白行・空白列で囲まれた連続範囲を返します。表全体の取得に便利です。'},
- {id:5,c:'条件分岐',l:'基礎',q:'score が80以上のときだけ処理する条件として正しいものは？',a:['If score >= 80 Then','If score => 80','If score Over 80','When score >= 80'],ok:0,e:'比較演算子は >= の順序で書き、条件の後ろに Then を置きます。'},
- {id:6,c:'繰り返し',l:'標準',q:'次のループで Debug.Print は何回実行されますか？',code:'For i = 1 To 5 Step 2\n    Debug.Print i\nNext i',a:['3回','2回','4回','5回'],ok:0,e:'i は 1、3、5 と2ずつ増えるため、処理は3回実行されます。'},
- {id:7,c:'プロシージャ',l:'基礎',q:'戻り値を返せるプロシージャはどれですか？',a:['Function','Sub','Property Letだけ','Module'],ok:0,e:'Function プロシージャは自身の名前に値を代入して戻り値を返せます。'},
- {id:8,c:'ブック・シート',l:'標準',q:'現在アクティブなブックを表すオブジェクトは？',a:['ActiveWorkbook','ThisWorkbook','CurrentBook','SelectedWorkbook'],ok:0,e:'ActiveWorkbook は現在操作対象のブックです。ThisWorkbook はコードが保存されているブックを表します。'},
- {id:9,c:'エラー処理',l:'標準',q:'実行時エラーが発生したら ErrorHandler ラベルへ移動する記述は？',a:['On Error GoTo ErrorHandler','Try ErrorHandler','On Error Resume ErrorHandler','Catch ErrorHandler'],ok:0,e:'On Error GoTo ラベル名 で、エラー発生時の処理位置を指定します。'},
- {id:10,c:'配列',l:'標準',q:'動的配列 arr の要素数を後から変更するステートメントは？',a:['ReDim','Resize','ReArray','Dim Again'],ok:0,e:'ReDim で動的配列の大きさを変更します。既存値を保つ場合は Preserve を併用します。'},
- {id:11,c:'イベント',l:'標準',q:'ワークシート上のセルが変更されたときに発生するイベントは？',a:['Worksheet_Change','Worksheet_Click','Workbook_Change','Cell_Changed'],ok:0,e:'Worksheet_Change イベントは、ユーザー操作や外部リンクによってセルが変更されたときに発生します。'},
- {id:12,c:'デバッグ',l:'基礎',q:'イミディエイトウィンドウへ値を表示する命令は？',a:['Debug.Print','Console.Write','Msg.Print','Immediate.Show'],ok:0,e:'Debug.Print を使うと、変数や式の値をイミディエイトウィンドウで確認できます。'}
-];
+const questions=[];
 questions.push(...window.EXTRA_QUESTIONS);
-const APP_VERSION='0.5.0';
-const KEY='vbaSprintPrototype';
+const APP_VERSION='0.1.0';
+const KEY='accessVbaSprintPrototype';
 const defaults={answered:0,seen:[],weak:[],mistakes:[],bookmarks:[],lastDate:'',streak:0,history:{},records:{},dailyGoal:10,examDate:'',lastSession:null};
 let state=Object.assign({},defaults,JSON.parse(localStorage.getItem(KEY)||'{}'));state.history=state.history||{};state.records=state.records||{};state.bookmarks=state.bookmarks||[];
 let quiz=[],pos=0,score=0,answered=false,sessionRatings={},calendarCursor=new Date();

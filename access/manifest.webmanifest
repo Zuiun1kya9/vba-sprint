@@ -1,0 +1,15 @@
+{
+  "name": "Access Sprint - Access VBA Standard 学習",
+  "short_name": "Access Sprint",
+  "description": "Access VBA Standard対策の一問一答学習アプリ",
+  "lang": "ja",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f2eb",
+  "theme_color": "#175c47",
+  "icons": [
+    {"src":"../icon-192.png","sizes":"192x192","type":"image/png","purpose":"any"},
+    {"src":"../icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
+  ]
+}
