@@ -6,10 +6,11 @@
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#f4f2eb",
-  "theme_color": "#175c47",
+  "background_color": "#f8eeee",
+  "theme_color": "#a22d3b",
   "icons": [
-    {"src":"../icon-192.png","sizes":"192x192","type":"image/png","purpose":"any"},
-    {"src":"../icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
+    {"src":"./icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any"},
+    {"src":"./icon-192.png","sizes":"192x192","type":"image/png","purpose":"any"},
+    {"src":"./icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
   ]
 }
